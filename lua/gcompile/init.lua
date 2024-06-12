@@ -1,9 +1,23 @@
 local M = {}
+local config = require('gcompile.config')
+
+local userconf = {}
+
+function M.setup(user_config)
+    userconf = config.get_config(user_config)
+    vim.api.nvim_create_user_command('GCompileAndRun', M.compile_and_run, {})
+end
 
 function M.compile_and_run(exit_on_end)
     local file = vim.fn.expand("%:p")
-    vim.cmd("split | terminal")
+    if userconf.split == 'vertical' then
+        vim.cmd("vsplit | terminal")
+    else
+        vim.cmd("split | terminal")
+    end
+
     local exit_part = ''
+
     if (exit_on_end) then
         exit_part = 'exec '
     end
@@ -13,4 +27,3 @@ function M.compile_and_run(exit_on_end)
 end
 
 return M
-
